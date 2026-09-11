@@ -2,8 +2,8 @@ class LRUCache {
     constructor(capacity) {
         this.capacity = capacity;
         this.map = new Map();
-        this.head = { key: 0, value: 0, prev: null, next: null };
-        this.tail = { key: 0, value: 0, prev: null, next: null };
+        this.head = { key: null, value: null, prev: null, next: null };
+        this.tail = { key: null, value: null, prev: null, next: null };
         this.head.next = this.tail;
         this.tail.prev = this.head;
     }
@@ -11,20 +11,20 @@ class LRUCache {
         if (!this.map.has(key)) {
             return -1;
         }
-        let node = this.map.get(key);
+        const node = this.map.get(key);
         this.remove(node);
         this.addFirst(node);
         return node.value;
     }
     put(key, value) {
         if (this.map.has(key)) {
-            let node = this.map.get(key);
+            const node = this.map.get(key);
             node.value = value;
             this.remove(node);
             this.addFirst(node);
             return;
         }
-        let node = {
+        const node = {
             key: key,
             value: value,
             prev: null,
@@ -33,7 +33,7 @@ class LRUCache {
         this.map.set(key, node);
         this.addFirst(node);
         if (this.map.size > this.capacity) {
-            let last = this.tail.prev;
+            const last = this.tail.prev;
             this.remove(last);
             this.map.delete(last.key);
         }
@@ -43,18 +43,18 @@ class LRUCache {
         node.next.prev = node.prev;
     }
     addFirst(node) {
-        node.next = this.head.next;
         node.prev = this.head;
+        node.next = this.head.next;
         this.head.next.prev = node;
         this.head.next = node;
     }
 }
 
-
-let cache = new LRUCache(2);
-cache.put(1, 10);
-cache.put(2, 20);
-console.log(cache.get(1)); // 10
-cache.put(3, 30);
-console.log(cache.get(2)); // -1
-console.log(cache.get(3)); // 30
+const cache = new LRUCache(2);
+cache.put("Ali", "Tashkent");
+cache.put("Sara", "Samarkand");
+console.log(cache.get("Ali")); // Tashkent
+cache.put("John", "Bukhara");
+console.log(cache.get("Sara")); // -1
+console.log(cache.get("Ali"));  // Tashkent
+console.log(cache.get("John")); // Bukhara
